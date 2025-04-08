@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/static/logo.png">
+    <title>机泵专用图谱</title>
+
+    <style>
+      :root{
+        --loading-background-color: transparent;
+        --body-background-color:#222331;
+      }
+      body {
+        background-color: var(--body-background-color);
+        margin: 0;
+      }
+      #app .loading{
+        color:#359186;
+        background-color: var(--loading-background-color);
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #app .animate{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100%;
+        overflow:hidden;
+      }
+      #app .animate. circle1{
+        transform-style: preserve-3d;
+        width: 35rem;
+        height: 31rem;
+        background: url(/static/circle.png) no-repeat center;
+        background-size: contain;
+        transform:rotateX(70deg);
+        animation:circle 5s linear infinite;
+      }
+      @keyframes circle {/*定义动画*/
+        0%{
+          transform: rotateX(70deg) rotateZ(0);/*围绕Z轴旋转360度，同时保持 rotateX(70deg)*/
+        }
+        100%{
+          transform: rotateX(70deg) rotateZ(360deg);
+        }
+      }
+    </style>
+
+  </head>
+  <body>
+    <div id="app">
+      <div class="animate">
+        <div class="circle1">
+
+        </div>
+      </div>
+
+      <div id="loading" class="loading">
+
+      </div>
+    </div>
+
+    <script>
+
+      //获取URL查询参数
+      //对比试试const urlParams = new URLSearchParams(window.location.search);
+      const urlParams=new URLSearchParams(window.self.location.hash);//通过 URLSearchParams 解析 URL 参数。
+      const topic=urlParams.get('topic');
+      const language=urlParams.get('language');
+
+      //根据 topic 设置背景颜色，不同 topic 选择不同的背景颜色
+      let bodyColor=(topic == 'simple-white' || topic=='white') ? '#fdfdfd' : '#222331';
+      if(topic == 'quiet-blue'){
+        bodyColor='#011e5a'
+      }else if(topic == 'high-ash'){
+        bodyColor='#222331'
+      }else if(topic=='blue'){
+        bodyColor='#2c3242'
+      }else if(topic=='ash'){
+        bodyColor='#403D4E'
+      }
+      //设置加载提示文本
+      const loadingText= language=='en' ? 'The resource is loading,please wait patiently' : '资源加载中，请耐心等待';
+      document.getElementById('loading').textContent=loadingText;
+
+      //动态修改css变量的值 将 bodyColor 赋值给 --body-background-color 动态更改页面背景
+      document.documentElement.style.setProperty('--body-background-color',bodyColor);
+
+    </script>
+<!--    //加载额外的配置文件。-->
+    <script src="/static/config.js"></script>
+
+    <!-- built files will be auto injected -->
+  </body>
+
+  <%
+  const now=new Date();
+  //计算本地时间偏移量 单位分钟
+  const offset=now.getTimezoneOffset()*60000;
+  const localISOTime=(new Date(now-offset)).toISOString().slice(0,19).replace('T',' ');
+  %>
+<!--  //将 localISOTime 传递到 JavaScript 变量 window.versionTime-->
+  <script>
+    window.versionTime='<%=localISOTime%>';
+  </script>
+</html>
